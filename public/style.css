@@ -1,0 +1,17 @@
+body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* background-color: aqua; */
+
+}
+
+header{
+    margin-top: 3em;
+}
+
+#logo{
+    width:10em;
+    border-radius: 15em;
+}
