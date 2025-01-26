@@ -83,7 +83,7 @@ router.get('/', recordController.getAllRecords);
  *       404:
  *         description: Record not found
  */
-router.get('/:id', recordController.getRecordById);
+router.get('/:id', recordController.getAllRecords);
 
 /**
  * @swagger

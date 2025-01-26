@@ -1,18 +1,30 @@
 const app = require('./app'); // Import the app instance from app.js
-const { sequelize } = require('./models'); // Import Sequelize instance
+const db = require('./config/db').db; // Import SQLite database instance
 
 const PORT = process.env.PORT || 3000;
 
-// Sync the database and start the server
+// Start the server
+
+
+
 (async () => {
     try {
-        await sequelize.sync({ alter: true }); // Sync the models to the database
-        console.log('Database synced successfully');
+        // Verify database connection
+        db.get('SELECT * FROM joueur', (err) => {
+            if (err) {
+                console.error('Error connecting to the database:', err.message);
+                process.exit(1); // Exit if the database connection fails
+            } else {
+                console.log('Database connected successfully');
+            }
+        });
 
+        // Start the server
         app.listen(PORT, () => {
             console.log(`Server running on http://localhost:${PORT}`);
         });
     } catch (error) {
-        console.error('Error syncing database:', error);
+        console.error('Error initializing the server:', error.message);
+        process.exit(1); // Exit if there’s an error starting the server
     }
 })();

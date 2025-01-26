@@ -1,102 +1,102 @@
-const record = require('../models/record');
-const journee = require('../models/journee');
-const joueur = require('../models/joueur');
+const db = require('../config/db').db;
 
 module.exports = {
     // Create a new record
-    createRecord: async (req, res) => {
-        try {
-            const { journee_id, joueur_id, fish_count, total_weight,absent } = req.body;
-        
-            // Determine if the player is absent
+    createRecord: (req, res) => {
+        const { journee_id, joueur_id, fish_count, total_weight, absent } = req.body;
 
-            // Calculate score
-            const score = absent ? -20 : fish_count * 50 + total_weight;
+        // Calculate score
+        const score = absent ? -20 : fish_count * 50 + total_weight;
+        // console.log(score)
+        // Insert the new record
+        const query = `
+            INSERT INTO record (journee_id, joueur_id, fish_count, total_weight, score, absent)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
 
-            // Create the new record
-            const newRecord = await record.create({
-                journee_id,
-                joueur_id,
-                fish_count,
-                total_weight,
-                score,
-                absent,
-            });
-
-            // Update player's total_score
-            const player = await joueur.findByPk(joueur_id);
-            player.total_score += score; // Update total score
-            await player.save();
-
-            // Recalculate daily rankings for the journée
-            const allRecords = await record.findAll({
-                where: { journee_id }, // Only records for the current journée
-                order: [['score', 'DESC']], // Sort by score (highest first)
-            });
-
-            // Update rankings for all records in the journée
-            for (let i = 0; i < allRecords.length; i++) {
-                await allRecords[i].update({ ranking: i + 1 });
+        db.run(query, [journee_id, joueur_id, fish_count, total_weight, score, absent], function (err) {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to create record', details: err.message });
             }
 
-            res.status(201).json(newRecord);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to create record', details: error.message });
-        }
+             res.status(201).json({ message: 'Record created successfully'})
+           
+        });
     },
-
 
     // Get all records sorted by score
-    getAllRecords: async(req,res)=>{
-        try{}
-        catch(error){
-            res.satus(500).json({error:'failed o fetch recod',details:error.message})
-        }
+    getAllRecords: (req, res) => {
+        const { journee_id } = req.query;
+
+        const query = journee_id
+            ? `SELECT * FROM record WHERE journee_id = ? ORDER BY score DESC`
+            : `SELECT * FROM record ORDER BY score DESC`;
+
+        db.all(query, journee_id ? [journee_id] : [], (err, rows) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to fetch records', details: err.message });
+            }
+            res.status(200).json(rows);
+        });
     },
+
     // Get a single record by ID
-    getRecordById: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const singleRecord = await record.findByPk(id, {
-                include: [journee, joueur], // Include associated journee and joueur
-            });
-            if (!singleRecord) {
+    getRecordById: (req, res) => {
+        const { id } = req.params;
+        const query = `
+            SELECT record.*, joueur.name AS joueur_name, journee.name AS journee_name
+            FROM record
+            JOIN joueur ON record.joueur_id = joueur.id
+            JOIN journee ON record.journee_id = journee.id
+            WHERE record.id = ?
+        `;
+
+        db.get(query, [id], (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to fetch record', details: err.message });
+            }
+            if (!row) {
                 return res.status(404).json({ error: 'Record not found' });
             }
-            res.status(200).json(singleRecord);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to fetch record', details: error.message });
-        }
+            res.status(200).json(row);
+        });
     },
 
     // Update a record by ID
-    updateRecord: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const { fish_count, total_weight, score, ranking } = req.body;
-            const recordToUpdate = await record.findByPk(id);
-            if (!recordToUpdate) {
+    updateRecord: (req, res) => {
+        const { id } = req.params;
+        const { fish_count, total_weight, score, ranking } = req.body;
+
+        const query = `
+            UPDATE record
+            SET fish_count = ?, total_weight = ?, score = ?, ranking = ?
+            WHERE id = ?
+        `;
+
+        db.run(query, [fish_count, total_weight, score, ranking, id], function (err) {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to update record', details: err.message });
+            }
+            if (this.changes === 0) {
                 return res.status(404).json({ error: 'Record not found' });
             }
-            await recordToUpdate.update({ fish_count, total_weight, score, ranking });
-            res.status(200).json(recordToUpdate);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to update record', details: error.message });
-        }
+            res.status(200).json({ id, fish_count, total_weight, score, ranking });
+        });
     },
 
     // Delete a record by ID
-    deleteRecord: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const recordToDelete = await record.findByPk(id);
-            if (!recordToDelete) {
+    deleteRecord: (req, res) => {
+        const { id } = req.params;
+        const query = `DELETE FROM record WHERE id = ?`;
+
+        db.run(query, [id], function (err) {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to delete record', details: err.message });
+            }
+            if (this.changes === 0) {
                 return res.status(404).json({ error: 'Record not found' });
             }
-            await recordToDelete.destroy();
             res.status(200).json({ message: 'Record deleted successfully' });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to delete record', details: error.message });
-        }
+        });
     },
 };
