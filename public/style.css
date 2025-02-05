@@ -1,14 +1,21 @@
-body{
+body, div{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    
     /* background-color: aqua; */
 
 }
 
 header{
     margin-top: 3em;
+}
+table, th, td {
+    border: 2px solid black;
+}
+th{
+    min-width: 10em;
 }
 
 #logo{

@@ -6,15 +6,13 @@ module.exports = {
         const { journee_id, joueur_id, fish_count, total_weight, absent } = req.body;
 
         // Calculate score
-        const score = absent ? -20 : fish_count * 50 + total_weight;
-        // console.log(score)
-        // Insert the new record
+      
         const query = `
-            INSERT INTO record (journee_id, joueur_id, fish_count, total_weight, score, absent)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO record (journee_id, joueur_id, fish_count, total_weight, absent)
+            VALUES (?, ?, ?, ?,  ?)
         `;
 
-        db.run(query, [journee_id, joueur_id, fish_count, total_weight, score, absent], function (err) {
+        db.run(query, [journee_id, joueur_id, fish_count, total_weight, absent], function (err) {
             if (err) {
                 return res.status(500).json({ error: 'Failed to create record', details: err.message });
             }
@@ -29,7 +27,7 @@ module.exports = {
         const { journee_id } = req.query;
 
         const query = journee_id
-            ? `SELECT * FROM record WHERE journee_id = ? ORDER BY score DESC`
+            ? `SELECT *, (fish_count*50 + total_weight) as score FROM record WHERE journee_id = ? ORDER BY score DESC`
             : `SELECT * FROM record ORDER BY score DESC`;
 
         db.all(query, journee_id ? [journee_id] : [], (err, rows) => {
@@ -44,7 +42,7 @@ module.exports = {
     getRecordById: (req, res) => {
         const { id } = req.params;
         const query = `
-            SELECT record.*, joueur.name AS joueur_name, journee.name AS journee_name
+            SELECT record.*,(record.fish_count*50 + record.total_weight) as score, joueur.name AS joueur_name, journee.name AS journee_name
             FROM record
             JOIN joueur ON record.joueur_id = joueur.id
             JOIN journee ON record.journee_id = journee.id
@@ -65,22 +63,27 @@ module.exports = {
     // Update a record by ID
     updateRecord: (req, res) => {
         const { id } = req.params;
-        const { fish_count, total_weight, score, ranking } = req.body;
+        const updates = req.body;
+        const {fish_count,total_weight,score}=req.body
+        const fields=Object.keys(updates).map(key=>`${key}=?`).join(", ");
+        const values=Object.values(updates);
+        values.push(id)
 
         const query = `
             UPDATE record
-            SET fish_count = ?, total_weight = ?, score = ?, ranking = ?
+            SET  ${fields}
             WHERE id = ?
         `;
 
-        db.run(query, [fish_count, total_weight, score, ranking, id], function (err) {
+        db.run(query, values, function (err) {
             if (err) {
                 return res.status(500).json({ error: 'Failed to update record', details: err.message });
             }
             if (this.changes === 0) {
                 return res.status(404).json({ error: 'Record not found' });
             }
-            res.status(200).json({ id, fish_count, total_weight, score, ranking });
+            res.status(200).json({ id, fish_count, total_weight, score
+             });
         });
     },
 

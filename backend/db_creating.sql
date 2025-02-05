@@ -1,6 +1,6 @@
 -- Table: joueur
 CREATE TABLE IF NOT EXISTS joueur (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
     name TEXT NOT NULL,
     phone_number TEXT,
     total_score FLOAT NOT NULL DEFAULT 0.0
@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS record (
     absent BOOLEAN NOT NULL DEFAULT 0,
     fish_count INTEGER NOT NULL,
     total_weight FLOAT NOT NULL,
-    score INTEGER,
     FOREIGN KEY (journee_id) REFERENCES journee (id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (joueur_id) REFERENCES joueur (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

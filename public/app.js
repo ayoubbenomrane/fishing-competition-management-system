@@ -1,61 +1,111 @@
-const API_BASE = "http://localhost:3000/api/"; // Backend API base URL
+import { getJournees, getRecords, getJoueurs,updateRecord } from "./api.js";
+const journeeList = document.querySelector('#journee-list');
 
+console.log("Starting app.js..."); // ✅ Log before anything else
 
-// Fetch and display all Journées
-async function fetchJournées() {
-    const response = await fetch(`${API_BASE}journee`);
-    const journées = await response.json();
+const joueurData = await getJoueurs();
+const joueurMap = {};
 
-    const journeeList = document.getElementById("journee-list");
-    journeeList.innerHTML = ""; // Clear previous list
+joueurData.forEach(joueur => {
+  joueurMap[joueur.id] = joueur;
 
-    journées.forEach((journee) => {
-        const div = document.createElement("div");
-        div.classList.add("mt-4");
-
-        div.innerHTML = `
-            <h4>${journee.name}</h4>
-            <p><strong>Date:</strong> ${journee.date || "No Date"} | <strong>Place:</strong> ${journee.place}</p>
-            <table class="table table-striped table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Player</th>
-                        <th>Number of Fish</th>
-                        <th>Total Weight (kg)</th>
-                        <th>Ranking</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic Player Records for this Journée -->
-                    <!-- Add logic for player records here -->
-                </tbody>
-            </table>
-        `;
-        journeeList.appendChild(div);
-    });
-}
-
-// Handle adding a new Journée
-document.getElementById("add-journee-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const name = document.getElementById("journee-name").value;
-    const date = document.getElementById("journee-date").value;
-    const place = document.getElementById("journee-place").value;
-
-    // Send POST request to backend
-    await fetch(API_BASE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, date, place }),
-    });
-
-    // Close the modal
-    $('#addJourneeModal').modal('hide');
-
-    // Refresh the list of Journées
-    fetchJournées();
 });
 
-// Initial Fetch
-fetchJournées();
+async function loadJournees() {
+  try {
+    console.log("Calling loadJournee()..."); // ✅ Log before calling getJournee
+
+    const journeeData = await getJournees();
+    const l = journeeData.length
+    for (let i = 0; i < l; i++) {
+      const journee = journeeData[i];
+      const recordData = await getRecords(journee.id);
+      const journeedetail = document.createElement("div");
+      journeedetail.classList = `journee-${journee.id}`;
+      journeedetail.innerHTML = `
+          <h5>
+            Titre = ${journee.name}   |   Localisation = ${journee.place}    |   Durée = ${journee.duration}    |    Date=${journee.date} 
+          </h5>
+          <table id="test">
+            <thead>
+              <tr>
+                <th>Nom et Prénom</th>
+                <th>nbr de poisson</th>
+                <th>poids (kg)</th>
+                <th>score</th>
+                <th>rang</th>
+
+              </tr>
+            </thead>
+            <tbody id="table-${journee.id}">
+            </tbody>
+
+        </table>
+      ` ;
+      journeeList.appendChild(journeedetail);
+      const tbody = document.getElementById(`table-${journee.id}`)
+      tbody.innerHTML = "";
+      for (let j = 0; j < recordData.length; j++) {
+
+        const row = document.createElement("tr");
+        const record = recordData[j]
+        row.classList.add(`record`);
+        row.innerHTML = `
+            <td id=${record.id} >${joueurMap[record.joueur_id].name}</td>
+            <td class="fish_count" contenteditable id=${record.id}>${record.fish_count}</td>
+            <td class="total_weight" contenteditable id=${record.id}>${record.total_weight}</td>
+            <td id=${record.id}>${record.score}</td>
+            <td id=${record.id}>${j + 1}</td>
+        
+        `;
+        tbody.appendChild(row);
+
+
+      }
+
+
+    }
+    tableUpdating();
+  }
+
+  catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+loadJournees()
+
+const saveCell= (cell)=>{
+  const body={
+    [cell.className]:cell.textContent
+  }
+  console.log(body);
+  updateRecord(cell.id,body)
+
+};
+
+
+function tableUpdating() {
+  const table = document.querySelector("#test")
+  console.log(table)
+  table.addEventListener("click", (event) => {
+    // Check if the clicked element is a <td> inside a <table>
+    const clickedCell = event.target.closest("td");
+
+    if (clickedCell.hasAttribute('contenteditable')) {
+      const originalvalue = clickedCell.textContent
+      // console.log(clickedCell.id)
+      // console.log(clickedCell.className )
+      // console.log(clickedCell.textContent)
+      clickedCell.focus();
+
+
+      clickedCell.style.backgroundColor = "lightgrey";
+      clickedCell.addEventListener('blur', () => {
+        saveCell(clickedCell);
+      })
+    }
+
+  });
+}
