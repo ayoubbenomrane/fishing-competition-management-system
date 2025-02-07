@@ -44,7 +44,12 @@ const joueurController = require('../controllers/joueurController.js');
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/Joueur'
+ *                      type: object
+ *                      properties:
+ *                          name:
+ *                              type: string
+ *                          phone_number:
+ *                              type: string
  * 
  *      
  * 
