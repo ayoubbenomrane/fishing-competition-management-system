@@ -1,4 +1,4 @@
-import { getJournees, getRecords, getJoueurs, updateRecord } from "./api.js";
+import { getJournees, getRecords, getJoueurs, updateRecord ,addPlayer } from "./api.js";
 const journeeList = document.querySelector('#journee-list');
 
 console.log("Starting app.js..."); // ✅ Log before anything else
@@ -107,5 +107,21 @@ const addPlayerButton=document.getElementById("add-player-button");
 addPlayerButton.addEventListener('click',()=>{
   playerDialog.showModal();
 });
+
+const playerForm=document.getElementById("player-form");
+playerForm.addEventListener("submit",async function (event) {
+  console.log("submitteeeeeed");
+  event.preventDefault();
+  const formData= new FormData(this);
+  const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value; // Map FormData entries to a plain object
+    });
+
+  await addPlayer(data);
+  playerDialog.close();
+
+  
+} )
 
 

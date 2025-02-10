@@ -1,78 +1,88 @@
-const db = require('../config/db').db;
+const db = require('../config/db'); // Ensure this exports a PostgreSQL pool
 
-module.exports = {
-    // Create a new joueur
-    createJoueur: (req, res) => {
-        const { name, phone_number } = req.body;
-        const query = `INSERT INTO joueur (name, phone_number) VALUES (?, ?)`;
+// Create a new joueur
+async function createJoueur(req, res) {
+    const { name, phone_number } = req.body;
 
-        db.run(query, [name, phone_number], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to create joueur', details: err.message });
-            }
-            res.status(201).json({ id: this.lastID, name, phone_number });
-        });
-    },
+    const query = `
+        INSERT INTO joueur (name, phone_number)
+        VALUES ($1, $2)
+        RETURNING *;
+    `;
 
-    // Get all joueurs
-    getAllJoueurs: (req, res) => {
-        const query = `SELECT * FROM joueur`;
-        
+    try {
+        const result = await db.query(query, [name, phone_number]);
+        res.status(201).json({ message: 'Joueur created successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to create joueur', details: err.message });
+    }
+}
 
-        db.all(query, [], (err, rows) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to fetch joueurs', details: err.message });
-            }
-            res.status(200).json(rows);
-        });
-    },
+// Get all joueurs
+async function getAllJoueurs(req, res) {
+    const query = `SELECT * FROM joueur`;
 
-    // Get a single joueur by ID
-    getJoueurById: (req, res) => {
-        const { id } = req.params;
-        const query = `SELECT * FROM joueur WHERE id = ?`;
+    try {
+        const result = await db.query(query);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch joueurs', details: err.message });
+    }
+}
 
-        db.get(query, [id], (err, row) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to fetch joueur', details: err.message });
-            }
-            if (!row) {
-                return res.status(404).json({ error: 'Joueur not found' });
-            }
-            res.status(200).json(row);
-        });
-    },
+// Get a single joueur by ID
+async function getJoueurById(req, res) {
+    const { id } = req.params;
+    const query = `SELECT * FROM joueur WHERE id = $1`;
 
-    // Update a joueur by ID
-    updateJoueur: (req, res) => {
-        const { id } = req.params;
-        const { name, phone_number } = req.body;
-        const query = `UPDATE joueur SET name = ?, phone_number = ? WHERE id = ?`;
+    try {
+        const result = await db.query(query, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Joueur not found' });
+        }
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch joueur', details: err.message });
+    }
+}
 
-        db.run(query, [name, phone_number, id], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to update joueur', details: err.message });
-            }
-            if (this.changes === 0) {
-                return res.status(404).json({ error: 'Joueur not found' });
-            }
-            res.status(200).json({ id, name, phone_number });
-        });
-    },
+// Update a joueur by ID
+async function updateJoueur(req, res) {
+    const { id } = req.params;
+    const { name } = req.body;
 
-    // Delete a joueur by ID
-    deleteJoueur: (req, res) => {
-        const { id } = req.params;
-        const query = `DELETE FROM joueur WHERE id = ?`;
+    const query = `
+        UPDATE joueur
+        SET name = $1
+        WHERE id = $2
+        RETURNING *;
+    `;
 
-        db.run(query, [id], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to delete joueur', details: err.message });
-            }
-            if (this.changes === 0) {
-                return res.status(404).json({ error: 'Joueur not found' });
-            }
-            res.status(200).json({ message: 'Joueur deleted successfully' });
-        });
-    },
-};
+    try {
+        const result = await db.query(query, [name, id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Joueur not found' });
+        }
+        res.status(200).json({ message: 'Joueur updated successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update joueur', details: err.message });
+    }
+}
+
+// Delete a joueur by ID
+async function deleteJoueur(req, res) {
+    const { id } = req.params;
+    const query = `DELETE FROM joueur WHERE id = $1 RETURNING *;`;
+
+    try {
+        const result = await db.query(query, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Joueur not found' });
+        }
+        res.status(200).json({ message: 'Joueur deleted successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete joueur', details: err.message });
+    }
+}
+
+module.exports={createJoueur,deleteJoueur,updateJoueur,getAllJoueurs,getJoueurById}

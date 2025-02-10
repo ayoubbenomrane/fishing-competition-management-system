@@ -1,84 +1,88 @@
-const db = require('../config/db').db;
+const db = require('../config/db'); // Ensure this exports a PostgreSQL pool
 
-module.exports = {
-    // Create a new journee
-    createJournee: (req, res) => {
-        const { name = 'Journee X', date = new Date(), place = 'Tunisia', duration = '05:00:00' } = req.body;
-        const query = `
-            INSERT INTO journee (name, date, place, duration)
-            VALUES (?, ?, ?, ?)
-        `;
+// Create a new journee
+async function createJournee(req, res) {
+    const { name = 'Journee X', date = new Date(), place = 'Tunisia', duration = '05:00:00' } = req.body;
 
-        db.run(query, [name, date, place, duration], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to create journee', details: err.message });
-            }
-            res.status(201).json({ id: this.lastID, name, date, place, duration });
-        });
-    },
+    const query = `
+        INSERT INTO journee (name, date, place, duration)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *;
+    `;
 
-    // Get all journees
-    getAllJournees: (req, res) => {
-        const query = `SELECT * FROM journee`;
+    try {
+        const result = await db.query(query, [name, date, place, duration]);
+        res.status(201).json({ message: 'Journee created successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to create journee', details: err.message });
+    }
+}
 
-        db.all(query, [], (err, rows) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to fetch journees', details: err.message });
-            }
-            res.status(200).json(rows);
-        });
-    },
+// Get all journees
+async function getAllJournees(req, res) {
+    const query = `SELECT * FROM journee`;
 
-    // Get a single journee by ID
-    getJourneeById: (req, res) => {
-        const { id } = req.params;
-        const query = `SELECT * FROM journee WHERE id = ?`;
+    try {
+        const result = await db.query(query);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch journees', details: err.message });
+    }
+}
 
-        db.get(query, [id], (err, row) => {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to fetch journee', details: err.message });
-            }
-            if (!row) {
-                return res.status(404).json({ error: 'Journee not found' });
-            }
-            res.status(200).json(row);
-        });
-    },
+// Get a single journee by ID
+async function getJourneeById(req, res) {
+    const { id } = req.params;
+    const query = `SELECT * FROM journee WHERE id = $1`;
 
-    // Update a journee by ID
-    updateJournee: (req, res) => {
-        const { id } = req.params;
-        const { name, date, place, duration } = req.body;
-        const query = `
-            UPDATE journee
-            SET name = ?, date = ?, place = ?, duration = ?
-            WHERE id = ?
-        `;
+    try {
+        const result = await db.query(query, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Journee not found' });
+        }
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch journee', details: err.message });
+    }
+}
 
-        db.run(query, [name, date, place, duration, id], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to update journee', details: err.message });
-            }
-            if (this.changes === 0) {
-                return res.status(404).json({ error: 'Journee not found' });
-            }
-            res.status(200).json({ id, name, date, place, duration });
-        });
-    },
+// Update a journee by ID
+async function updateJournee(req, res) {
+    const { id } = req.params;
+    const { name, date, place, duration } = req.body;
 
-    // Delete a journee by ID
-    deleteJournee: (req, res) => {
-        const { id } = req.params;
-        const query = `DELETE FROM journee WHERE id = ?`;
+    const query = `
+        UPDATE journee
+        SET name = $1, date = $2, place = $3, duration = $4
+        WHERE id = $5
+        RETURNING *;
+    `;
 
-        db.run(query, [id], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Failed to delete journee', details: err.message });
-            }
-            if (this.changes === 0) {
-                return res.status(404).json({ error: 'Journee not found' });
-            }
-            res.status(200).json({ message: 'Journee deleted successfully' });
-        });
-    },
-};
+    try {
+        const result = await db.query(query, [name, date, place, duration, id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Journee not found' });
+        }
+        res.status(200).json({ message: 'Journee updated successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update journee', details: err.message });
+    }
+}
+
+// Delete a journee by ID
+async function deleteJournee(req, res) {
+    const { id } = req.params;
+    const query = `DELETE FROM journee WHERE id = $1 RETURNING *;`;
+
+    try {
+        const result = await db.query(query, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Journee not found' });
+        }
+        res.status(200).json({ message: 'Journee deleted successfully', data: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete journee', details: err.message });
+    }
+}
+
+module.exports={createJournee,getAllJournees,getJourneeById,updateJournee,deleteJournee}

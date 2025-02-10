@@ -13,6 +13,7 @@ const app = express();
 // Middleware
 app.use(cors()); // Enable CORS for cross-origin requests
 app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); // For form data
 
 // Routes
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));

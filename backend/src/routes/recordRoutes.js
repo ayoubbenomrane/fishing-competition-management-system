@@ -42,23 +42,7 @@ const recordController = require('../controllers/recordController');
  *           description: Indicates if the joueur was absent
  */
 
-/**
- * @swagger
- * /record:
- *   get:
- *     summary: Retrieve all records
- *     tags: [Record]
- *     responses:
- *       200:
- *         description: A list of records
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Record'
- */
-router.get('/', recordController.getAllRecords);
+
 
 /**
  * @swagger
@@ -83,7 +67,7 @@ router.get('/', recordController.getAllRecords);
  *       404:
  *         description: Record not found
  */
-router.get('/:id', recordController.getAllRecords);
+router.get('/', recordController.getAllRecords);
 
 /**
  * @swagger
