@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS joueur (
 CREATE TABLE IF NOT EXISTS journee (
     id SERIAL PRIMARY KEY ,
     name TEXT DEFAULT 'Journee X',
-    date timestamp DEFAULT CURRENT_TIMESTAMP,
+    date DATE DEFAULT CURRENT_DATE,
     place TEXT DEFAULT 'Tunisia',
     duration TIME DEFAULT '05:00:00'
 );

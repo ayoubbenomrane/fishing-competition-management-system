@@ -11,9 +11,18 @@ async function createJoueur(req, res) {
     `;
 
     try {
+        await db.query("BEGIN");
         const result = await db.query(query, [name, phone_number]);
+        const new_player=result.rows[0];
+        const getJourneesQuery="SELECT id FROM journee";
+        const journees=(await db.query(getJourneesQuery)).rows;
+        const addRecordsQuery= `INSERT INTO record (journee_id,joueur_id,fish_count,total_weight,absent) VALUES ${journees.map((_,index)=>`($${index*5+1} , $${index*5+2} , $${index*5+3} , $${index*5+4} , $${index*5+5})`).join(",")} `  ;
+        const values= journees.flatMap(journee=>[journee.id,new_player.id,0,0,0]);
+        await db.query(addRecordsQuery,values);
+        await db.query("COMMIT");
         res.status(201).json({ message: 'Joueur created successfully', data: result.rows[0] });
     } catch (err) {
+        await db.query("ROLLBACK");
         res.status(500).json({ error: 'Failed to create joueur', details: err.message });
     }
 }
@@ -23,6 +32,7 @@ async function getAllJoueurs(req, res) {
     const query = `SELECT * FROM joueur`;
 
     try {
+
         const result = await db.query(query);
         res.status(200).json(result.rows);
     } catch (err) {

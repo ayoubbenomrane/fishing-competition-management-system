@@ -1,4 +1,5 @@
-import { getJournees, getRecords, getJoueurs, updateRecord ,addPlayer } from "./api.js";
+import { getJournees, getRecords, getJoueurs, updateRecord, addPlayer } from "./api.js";
+
 const journeeList = document.querySelector('#journee-list');
 
 console.log("Starting app.js..."); // ✅ Log before anything else
@@ -14,29 +15,50 @@ async function loadJournees() {
   try {
     console.log("Calling loadJournees()...");
     const journeeData = await getJournees();
-    
+
     for (const journee of journeeData) {
       const recordData = await getRecords(journee.id);
-      const journeedetail = document.createElement("div");
-      journeedetail.classList = `journee-${journee.id}`;
-      journeedetail.innerHTML = `
-          <h5>
-            Titre = ${journee.name} | Localisation = ${journee.place} | Durée = ${journee.duration} | Date=${journee.date} 
-          </h5>
-          <table>
-            <thead>
-              <tr>
-                <th>Nom et Prénom</th>
-                <th>nbr de poisson</th>
-                <th>poids (kg)</th>
-                <th>score</th>
-                <th>rang</th>
-              </tr>
-            </thead>
-            <tbody id="table-${journee.id}"></tbody>
-          </table>
+
+      // Create a container for the journée
+      const journeeDetail = document.createElement("div");
+      journeeDetail.classList.add("mb-4", "p-3", "bg-white", "shadow-sm", "rounded");
+
+      // Add the journée title
+      const title = document.createElement("h5");
+      title.classList.add("mb-3");
+      title.textContent = `Titre = ${journee.name} | Localisation = ${journee.place} | Durée = ${journee.duration} | Date = ${journee.date}`;
+      journeeDetail.appendChild(title);
+
+      // Create the table
+      const table = document.createElement("table");
+      table.classList.add("table", "table-striped", "table-bordered");
+
+      // Create the table header
+      const thead = document.createElement("thead");
+      thead.classList.add("table-dark");
+      thead.innerHTML = `
+        <tr>
+          <th>Nom et Prénom</th>
+          <th>nbr de poisson</th>
+          <th>poids (kg)</th>
+          <th>score</th>
+          <th>rang</th>
+        </tr>
       `;
-      journeeList.appendChild(journeedetail);
+      table.appendChild(thead);
+
+      // Create the table body
+      const tbody = document.createElement("tbody");
+      tbody.id = `table-${journee.id}`;
+      table.appendChild(tbody);
+
+      // Append the table to the journée container
+      journeeDetail.appendChild(table);
+
+      // Append the journée container to the journee list
+      journeeList.appendChild(journeeDetail);
+
+      // Update the table with records
       updateTable(journee.id, recordData);
     }
   } catch (error) {
@@ -50,7 +72,7 @@ async function updateTable(journee_id, recordData) {
 
   // Sort records by score in descending order
   recordData.sort((a, b) => b.score - a.score);
-  
+
   recordData.forEach((record, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -69,7 +91,7 @@ async function saveCell(cell) {
   cell.classList.remove("on-focus");
   console.log(body);
   await updateRecord(cell.id, body);
-  
+
   // Reload updated records & table order
   const journee_id = cell.closest("tbody").id.split("-")[1];
   const updatedRecords = await getRecords(journee_id);
@@ -100,28 +122,19 @@ function tableUpdating() {
 loadJournees();
 tableUpdating();
 
-// -------------   managing dialogs -------------
-
-const playerDialog=document.getElementById("add-player-modal");
-const addPlayerButton=document.getElementById("add-player-button");
-addPlayerButton.addEventListener('click',()=>{
-  playerDialog.showModal();
-});
+// ------------- Managing dialogs -------------
 
 const playerForm=document.getElementById("player-form");
-playerForm.addEventListener("submit",async function (event) {
-  console.log("submitteeeeeed");
+
+playerForm.addEventListener("submit",async  (event)=>{
   event.preventDefault();
-  const formData= new FormData(this);
+  const formData = new FormData(this);
   const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value; // Map FormData entries to a plain object
-    });
+  formData.forEach((value, key) => {
+    data[key] = value; // Map FormData entries to a plain object
+  });
+  console.log(data)
 
   await addPlayer(data);
   playerDialog.close();
-
-  
-} )
-
-
+})
