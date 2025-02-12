@@ -45,3 +45,6 @@ export async function updateRecord(record_id, body) {
 export async function addPlayer(body) {
     return await apiRequest("joueur", "POST", body)
 }
+export async function addJournee(body){
+    return await apiRequest("journee","POST", body)
+}

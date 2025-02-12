@@ -1,4 +1,4 @@
-import { getJournees, getRecords, getJoueurs, updateRecord, addPlayer } from "./api.js";
+import { getJournees, getRecords, getJoueurs, updateRecord, addPlayer ,addJournee} from "./api.js";
 
 const journeeList = document.querySelector('#journee-list');
 
@@ -128,7 +128,7 @@ const playerForm=document.getElementById("player-form");
 
 playerForm.addEventListener("submit",async  (event)=>{
   event.preventDefault();
-  const formData = new FormData(this);
+  const formData = new FormData(playerForm);
   const data = {};
   formData.forEach((value, key) => {
     data[key] = value; // Map FormData entries to a plain object
@@ -136,5 +136,27 @@ playerForm.addEventListener("submit",async  (event)=>{
   console.log(data)
 
   await addPlayer(data);
-  playerDialog.close();
+})
+
+const journeeForm=document.getElementById("journee-form");
+journeeForm.addEventListener("submit",async (event)=>{
+  event.preventDefault();
+  const name=document.getElementById("journee-name").value;
+  const date=document.getElementById("journee-date").value;
+  const place=document.getElementById("journee-place").value;
+  const hours=document.getElementById("hours").value;
+  const minutes=document.getElementById("minutes").value;
+  const duration= ` ${hours}:${minutes}`
+  console.log(duration)
+  console.log(minutes)
+  const data={
+    "name":name,
+    "date":date,
+    "place":place,
+    "duration":duration
+  }
+  console.log(data)
+  await addJournee(data);
+
+
 })

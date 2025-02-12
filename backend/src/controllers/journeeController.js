@@ -11,9 +11,19 @@ async function createJournee(req, res) {
     `;
 
     try {
-        const result = await db.query(query, [name, date, place, duration]);
-        res.status(201).json({ message: 'Journee created successfully', data: result.rows[0] });
+        await db.query("BEGIN");
+
+        const result = (await db.query(query, [name, date, place, duration])).rows[0];
+        const getJoueurQuery= "SELECT id FROM joueur";
+        const joueurs=await (await db.query(getJoueurQuery)).rows;
+        const recordQuery=`INSERT INTO record (journee_id,joueur_id,fish_count,total_weight,absent) VALUES${joueurs.map((joueurs,index)=>` ($${index*5+1} ,$${index*5+2} ,$${index*5+3} ,$${index*5+4} ,$${index*5+5})`)} `;
+        const values=joueurs.flatMap(joueur=>[result.id,joueur.id,0,0,0])
+        console.log(recordQuery,values)
+        await db.query(recordQuery,values);
+        await db.query("COMMIT");
+        res.status(201).json({ message: 'Journee created successfully', data: result});
     } catch (err) {
+        await db.query("ROLLBACK")
         res.status(500).json({ error: 'Failed to create journee', details: err.message });
     }
 }

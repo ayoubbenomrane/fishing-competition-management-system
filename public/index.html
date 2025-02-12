@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
     <header class="bg-white shadow-sm py-3">
         <div class="container">
@@ -18,11 +20,16 @@
         <div class="row">
             <div class="col">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0">Journées</h2>
                     <!-- Add Journée Button -->
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addJourneeModal">
-                        Add Journée
+                    <button id="add-player-button" class="btn btn-success mt-4" data-bs-toggle="modal"
+                        data-bs-target="#add-player-modal">
+                        Ajouter Joueur
                     </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-journee-modal">
+                        Ajouter Journée
+                    </button>
+                    <h2 class="mb-0">Journées</h2>
+
                 </div>
 
                 <!-- Journée List -->
@@ -33,12 +40,11 @@
         </div>
 
         <!-- Add Player Button -->
-        <button id="add-player-button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#add-player-modal">
-            Ajouter Joueur
-        </button>
+
 
         <!-- Add Player Modal -->
-        <div class="modal fade" id="add-player-modal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+        <div class="modal fade" id="add-player-modal" tabindex="-1" aria-labelledby="addPlayerModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -53,15 +59,53 @@
                             </div>
                             <div class="mb-3">
                                 <label for="player-phone-number" class="form-label">Numéro de téléphone:</label>
-                                <input type="text" class="form-control" id="player-phone-number" name="phone_number" required>
+                                <input type="text" class="form-control" id="player-phone-number" name="phone_number"
+                                    required>
                             </div>
-                            <button id ="submit-player" type="submit" class="btn btn-primary">Enregistrer & Fermer</button>
+                            <button id="submit-player" type="submit" class="btn btn-primary">Enregistrer &
+                                Fermer</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-      
+        <!-- Add Player Modal -->
+        <div class="modal fade" id="add-journee-modal" tabindex="-1" aria-labelledby="addJourneeModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addJourneeModalLabel">Ajouter Journée</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="journee-form">
+                            <div class="mb-3">
+                                <label for="journee-name" class="form-label">Nom:</label>
+                                <input type="text" class="form-control" id="journee-name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="journee-date" class="form-label">Date:</label>
+                                <input type="date" class="form-control" id="journee-date" name="date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="journee-place" class="form-label">Place:</label>
+                                <input type="text" class="form-control" id="journee-place" name="place"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="journee-duration">Heures: <input type="number" min="0" max="23" step="1" value="5" name="hours" id="hours"></label>
+                                <label>Minutes: <input type="number" min="0" max="59" step="1" value="0" name="minutes" id="minutes"></label>
+
+                            </div>
+                            <button id="submit-journee" type="submit" class="btn btn-primary">Enregistrer &
+                                Fermer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Bootstrap JS -->
@@ -69,4 +113,5 @@
     <!-- Custom JS -->
     <script type="module" src="app.js"></script>
 </body>
+
 </html>
