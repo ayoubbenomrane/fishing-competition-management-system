@@ -16,10 +16,14 @@ async function createJoueur(req, res) {
         const new_player=result.rows[0];
         const getJourneesQuery="SELECT id FROM journee";
         const journees=(await db.query(getJourneesQuery)).rows;
+        if(journees.length==0) {
+            await db.query("COMMIT")
+        }
+        else{
         const addRecordsQuery= `INSERT INTO record (journee_id,joueur_id,fish_count,total_weight,absent) VALUES ${journees.map((_,index)=>`($${index*5+1} , $${index*5+2} , $${index*5+3} , $${index*5+4} , $${index*5+5})`).join(",")} `  ;
         const values= journees.flatMap(journee=>[journee.id,new_player.id,0,0,0]);
         await db.query(addRecordsQuery,values);
-        await db.query("COMMIT");
+        await db.query("COMMIT");}
         res.status(201).json({ message: 'Joueur created successfully', data: result.rows[0] });
     } catch (err) {
         await db.query("ROLLBACK");
