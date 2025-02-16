@@ -1,7 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const joueurController = require('../controllers/joueurController.js');
+const multer  = require('multer')
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../public/assets/profile_pictures');
+    // cb(null, 'uploads');
+
+    const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname);
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 // CRUD routes for joueur
 
 
@@ -54,7 +76,7 @@ const joueurController = require('../controllers/joueurController.js');
  *      
  * 
  */
-router.post('', joueurController.createJoueur); // Create
+router.post('',upload.single('profile_picture'), joueurController.createJoueur); // Create
 
 /**
  * @swagger
@@ -111,5 +133,17 @@ router.put('/:id', joueurController.updateJoueur); // Update
  */
 
 router.delete('/:id', joueurController.deleteJoueur); // Delete
+
+
+
+
+// router.post('/profile',upload.single('avatar'),function(req,res){
+    
+//     res.json(req.file)
+//     console.log("bitch");
+     
+// })
+
+
 
 module.exports = router;

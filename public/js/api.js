@@ -3,11 +3,11 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     try {
         const options = {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            // headers: { 'Content-Type': 'application/json' },
 
         }
         if (body) {
-            options.body = JSON.stringify(body);
+            options.body = body;
         }
         const response = await fetch(`${url}${endpoint}`, options);
         if (!response.ok) {

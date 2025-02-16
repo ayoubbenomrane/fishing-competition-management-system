@@ -84,7 +84,7 @@ async function updateTable(journee_id, recordData) {
       <td>${joueurMap[record.joueur_id].name}</td>
       <td class="fish_count" contenteditable id=${record.id}>${record.absent? 0: record.fish_count }</td>
       <td class="total_weight" contenteditable id=${record.id}>${record.absent? 0: record.total_weight }</td>
-      <td>${record.absent? -20: record.fish_count }</td>
+      <td>${record.absent? -20: (record.fish_count*50+record.total_weight) }</td>
       <td>${index + 1}</td>
       <td>
         <div class="form-check form-switch">
@@ -137,20 +137,12 @@ loadJournees();
 tableUpdating();
 
 // ------------- Managing dialogs -------------
-
-const playerForm=document.getElementById("player-form");
-
-playerForm.addEventListener("submit",async  (event)=>{
+const joueurForm=document.getElementById("player-form");
+joueurForm.addEventListener('submit',async (event)=>{
   event.preventDefault();
-  const formData = new FormData(playerForm);
-  const data = {};
-  formData.forEach((value, key) => {
-    data[key] = value; // Map FormData entries to a plain object
-  });
-  console.log(data)
-  const modal = bootstrap.Modal.getInstance(document.getElementById("add-player-modal"));
-  modal.hide();
-  await addPlayer(data);
+  console.log("submited")
+  const formData= new FormData(joueurForm);
+  await addPlayer(formData)
 })
 
 const journeeForm=document.getElementById("journee-form");
@@ -197,7 +189,7 @@ document.addEventListener("click", async (event) => {
 
 
     }
-    loadJournees();
+    // loadJournees();
 
 
   }

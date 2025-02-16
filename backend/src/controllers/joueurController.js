@@ -2,17 +2,18 @@ const db = require('../config/db'); // Ensure this exports a PostgreSQL pool
 
 // Create a new joueur
 async function createJoueur(req, res) {
-    const { name, phone_number } = req.body;
+    const { name, phone_number,birthdate } = req.body;
 
     const query = `
-        INSERT INTO joueur (name, phone_number)
-        VALUES ($1, $2)
+        INSERT INTO joueur (name,birthdate,profile_picture, phone_number)
+        VALUES ($1, $2,$3,$4)
         RETURNING *;
     `;
 
     try {
         await db.query("BEGIN");
-        const result = await db.query(query, [name, phone_number]);
+        console.log(req.file)
+        const result = await db.query(query, [name,birthdate,req.file.filename, phone_number]);
         const new_player=result.rows[0];
         const getJourneesQuery="SELECT id FROM journee";
         const journees=(await db.query(getJourneesQuery)).rows;

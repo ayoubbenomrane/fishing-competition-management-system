@@ -9,11 +9,13 @@ const joueurRoutes = require('./routes/joueurRoutes');
 const recordRoutes = require('./routes/recordRoutes');
 
 const app = express();
-
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 // Middleware
 app.use(cors()); // Enable CORS for cross-origin requests
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); // For form data
+app.use(express.static('../uploads'))
 
 // Routes
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));

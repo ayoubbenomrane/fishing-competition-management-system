@@ -2,8 +2,10 @@
 CREATE TABLE IF NOT EXISTS joueur (
     id SERIAL PRIMARY KEY , 
     name TEXT NOT NULL,
-    phone_number TEXT,
-    total_score FLOAT NOT NULL DEFAULT 0.0
+    birthdate DATE ,
+    profile_picture,
+    phone_number TEXT
+    
 );
 
 -- Table: journee

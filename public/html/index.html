@@ -13,6 +13,7 @@
     <header >
        
 
+
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
               <a class="navbar-brand" href="#"><img src="assets/cpsn logo.jpg" style="max-width: 150px" alt=""></a>
@@ -79,10 +80,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="player-form">
+
+                        <form id="player-form" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="player-name" class="form-label">Photo de profil:</label>
+                                <input type="file" class="form-control" id="profile-picture" name="profile_picture" required>
+                            </div>
                             <div class="mb-3">
                                 <label for="player-name" class="form-label">Nom:</label>
                                 <input type="text" class="form-control" id="player-name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="birthdate" class="form-label">Date de naissance:</label>
+                                <input type="date" class="form-control" id="birthdate" name="birthdate"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="player-phone-number" class="form-label">Numéro de téléphone:</label>
@@ -106,7 +117,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="journee-form">
+                        <form id="journee-form" >
                             <div class="mb-3">
                                 <label for="journee-name" class="form-label">Nom:</label>
                                 <input type="text" class="form-control" id="journee-name" name="name" required>
