@@ -16,7 +16,7 @@
 
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
-              <a class="navbar-brand" href="#"><img src="assets/cpsn logo.jpg" style="max-width: 150px" alt=""></a>
+              <a class="navbar-brand" href="#"><img src="../assets/cpsn logo.jpg" style="max-width: 150px" alt=""></a>
               <button
                 data-mdb-collapse-init
                 class="navbar-toggler"
@@ -51,9 +51,7 @@
         <!-- Journées Section -->
         <div class="row w-100 mb-4">
             <div class="d-flex justify-content-around w-100">
-                <button id="add-player-button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#add-player-modal">
-                    Ajouter Joueur
-                </button>
+                
                 <button id="add-journee-button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#add-journee-modal">
                     Ajouter Journée
                 </button>
@@ -71,43 +69,8 @@
 
 
         <!-- Add Player Modal -->
-        <div class="modal fade" id="add-player-modal" tabindex="-1" aria-labelledby="addPlayerModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addPlayerModalLabel">Ajouter Joueur</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <form id="player-form" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="player-name" class="form-label">Photo de profil:</label>
-                                <input type="file" class="form-control" id="profile-picture" name="profile_picture" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="player-name" class="form-label">Nom:</label>
-                                <input type="text" class="form-control" id="player-name" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="birthdate" class="form-label">Date de naissance:</label>
-                                <input type="date" class="form-control" id="birthdate" name="birthdate"
-                                    required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="player-phone-number" class="form-label">Numéro de téléphone:</label>
-                                <input type="text" class="form-control" id="player-phone-number" name="phone_number"
-                                    required>
-                            </div>
-                            <button id="submit-player" type="submit" class="btn btn-primary">Enregistrer &
-                                Fermer</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Add Player Modal -->
+       
+        <!-- Add Journee Modal -->
         <div class="modal fade" id="add-journee-modal" tabindex="-1" aria-labelledby="addJourneeModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">

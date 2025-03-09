@@ -9,6 +9,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         if (body) {
             options.body = body;
         }
+       
         const response = await fetch(`${url}${endpoint}`, options);
         if (!response.ok) {
             const errorDetails = await response.text();  // Get response body for debugging
@@ -47,4 +48,7 @@ export async function addPlayer(body) {
 }
 export async function addJournee(body){
     return await apiRequest("journee","POST", body)
+}
+export async function deletePlayer(id){
+    return await apiRequest(`joueur/${id}`,"DELETE")
 }

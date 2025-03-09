@@ -19,7 +19,6 @@ async function loadJournees() {
 
     for (const journee of journeeData) {
       const recordData = await getRecords(journee.id);
-      console.log("record  ", recordData)
       for(const record of recordData){
         if(record.absent) {record.score=-20;}
       }
@@ -102,7 +101,7 @@ async function saveCell(cell,prev) {
   else{
   const body = { [cell.classList[0]]: cell.textContent };
   cell.classList.remove("on-focus");
-  console.log(body);
+  console.log(body)
   await updateRecord(cell.id, body);
 
   // Reload updated records & table order
@@ -126,9 +125,9 @@ function tableUpdating() {
         }
       });
 
-      clickedCell.addEventListener("blur", () => {
-        saveCell(clickedCell,prev);
-      });
+      // clickedCell.addEventListener("blur", () => {
+      //   saveCell(clickedCell,prev);
+      // });
     }
   });
 }
@@ -137,13 +136,6 @@ loadJournees();
 tableUpdating();
 
 // ------------- Managing dialogs -------------
-const joueurForm=document.getElementById("player-form");
-joueurForm.addEventListener('submit',async (event)=>{
-  event.preventDefault();
-  console.log("submited")
-  const formData= new FormData(joueurForm);
-  await addPlayer(formData)
-})
 
 const journeeForm=document.getElementById("journee-form");
 journeeForm.addEventListener("submit",async (event)=>{
