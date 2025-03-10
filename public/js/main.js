@@ -12,16 +12,15 @@ joueurData.forEach(joueur => {
 });
 
 async function loadJournees() {
-  journeeList.innerHTML="";
   try {
     console.log("Calling loadJournees()...");
+    journeeList.innerHTML="";
+
     const journeeData = await getJournees();
 
     for (const journee of journeeData) {
       const recordData = await getRecords(journee.id);
-      for(const record of recordData){
-        if(record.absent) {record.score=-20;}
-      }
+
       // Create a container for the journée
       const journeeDetail = document.createElement("div");
       journeeDetail.classList.add("mb-4", "p-3", "bg-white", "shadow-sm", "rounded");
@@ -46,7 +45,6 @@ async function loadJournees() {
           <th>poids (kg)</th>
           <th>score</th>
           <th>rang</th>
-          <th>absent</th>
         </tr>
       `;
       table.appendChild(thead);
@@ -81,34 +79,31 @@ async function updateTable(journee_id, recordData) {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${joueurMap[record.joueur_id].name}</td>
-      <td class="fish_count" contenteditable id=${record.id}>${record.absent? 0: record.fish_count }</td>
-      <td class="total_weight" contenteditable id=${record.id}>${record.absent? 0: record.total_weight }</td>
-      <td>${record.absent? -20: (record.fish_count*50+record.total_weight) }</td>
+      <td class="fish_count" contenteditable id=${record.id}>${record.fish_count}</td>
+      <td class="total_weight" contenteditable id=${record.id}>${record.total_weight}</td>
+      <td>${record.score}</td>
       <td>${index + 1}</td>
-      <td>
-        <div class="form-check form-switch">
-          <input class="form-check-input absent-toggle" type="checkbox" toggleSwitch id="${record.id}"   ${record.absent ? "checked" :""} >
-          
-        </div>
-      </td>
     `;
     tbody.appendChild(row);
   });
 }
 
+
 async function saveCell(cell,prev) {
   if(cell.textContent==""){cell.textContent=prev;return}
   else{
-  const body = { [cell.classList[0]]: cell.textContent };
-  cell.classList.remove("on-focus");
-  console.log(body)
-  await updateRecord(cell.id, body);
+    const body = { [cell.classList[0]]: cell.textContent };
 
-  // Reload updated records & table order
+    cell.classList.remove("on-focus");
+    console.log(body)
+  await updateRecord(cell.id, body);
   const journee_id = cell.closest("tbody").id.split("-")[1];
   const updatedRecords = await getRecords(journee_id);
   updateTable(journee_id, updatedRecords);
+  // Reload updated records & table order
+  
 }}
+
 
 function tableUpdating() {
   document.body.addEventListener("click", (event) => {

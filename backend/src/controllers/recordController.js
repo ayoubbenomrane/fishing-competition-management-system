@@ -29,15 +29,16 @@ async function getAllRecords(req,res){
 async function updateRecord(req,res){
     const {id}=req.params;
     const updates=req.body;
-    console.log(updates)
+    // console.log(updates)
     // const fields = Object.keys(updates).map((key,index) =>  {`${key} = $${index+1}`}).join(",");
     const fields = Object.keys(updates).map((key, index) => `${key} = $${index + 1}`).join(",");
     console.log(fields)
     const values=Object.values(updates);
     values.push(id);
+
     const query= `UPDATE record SET ${fields} WHERE id=$${values.length}  RETURNING *`;
     try {
-        console.log(query);
+        // console.log(query);
         const result = await db.query(query, values);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Record not found' });

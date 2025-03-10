@@ -1,14 +1,24 @@
 const url = "http://localhost:3000/api/";
-async function apiRequest(endpoint, method = 'GET', body = null) {
+async function apiRequest(endpoint, method = 'GET', body = null, contentType=null) {
     try {
         const options = {
             method,
+            
             // headers: { 'Content-Type': 'application/json' },
 
         }
-        if (body) {
-            options.body = body;
+        if(body){
+            options.body=body
         }
+        if(contentType=='json'){
+
+            options.headers={'Content-Type':'application/json'};
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+        }
+        
+       
        
         const response = await fetch(`${url}${endpoint}`, options);
         if (!response.ok) {
@@ -40,7 +50,7 @@ export async function getJoueurs() {
 }
 
 export async function updateRecord(record_id, body) {
-    return await apiRequest(`record/${record_id}`, 'PUT', body)
+    return await apiRequest(`record/${record_id}`, 'PUT', body,'json')
 }
 
 export async function addPlayer(body) {
