@@ -3,7 +3,7 @@ const db = require('../config/db'); // Ensure this exports a PostgreSQL pool
 // Create a new joueur
 async function createJoueur(req, res) {
     const { name, phone_number,birthdate } = req.body;
-
+    console.log(req.body)
     const query = `
         INSERT INTO joueur (name,birthdate,profile_picture, phone_number)
         VALUES ($1, $2,$3,$4)
@@ -65,23 +65,23 @@ async function getJoueurById(req, res) {
 async function updateJoueur(req, res) {
     const { id } = req.params;
     const { name } = req.body;
+    console.log(req.body)
+    // const query = `
+    //     UPDATE joueur
+    //     SET name = $1
+    //     WHERE id = $2
+    //     RETURNING *;
+    // `;
 
-    const query = `
-        UPDATE joueur
-        SET name = $1
-        WHERE id = $2
-        RETURNING *;
-    `;
-
-    try {
-        const result = await db.query(query, [name, id]);
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Joueur not found' });
-        }
-        res.status(200).json({ message: 'Joueur updated successfully', data: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to update joueur', details: err.message });
-    }
+    // try {
+    //     const result = await db.query(query, [name, id]);
+    //     if (result.rows.length === 0) {
+    //         return res.status(404).json({ error: 'Joueur not found' });
+    //     }
+    //     res.status(200).json({ message: 'Joueur updated successfully', data: result.rows[0] });
+    // } catch (err) {
+    //     res.status(500).json({ error: 'Failed to update joueur', details: err.message });
+    // }
 }
 
 // Delete a joueur by ID

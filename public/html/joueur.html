@@ -41,40 +41,46 @@
     </button>
   </div>
   
-  <!-- ------------  add player modal pop up     ------ -->
-  <div class="modal fade" id="add-player-modal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addPlayerModalLabel">Ajouter Joueur</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
 
-          <form id="player-form" enctype="multipart/form-data">
-            <div class="mb-3">
-              <label for="player-name" class="form-label">Photo de profil:</label>
-              <input type="file" class="form-control" id="profile-picture" name="profile_picture" >
-            </div>
-            <div class="mb-3">
-              <label for="player-name" class="form-label">Nom:</label>
-              <input type="text" class="form-control" id="player-name" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label for="birthdate" class="form-label">Date de naissance:</label>
-              <input type="date" class="form-control" id="birthdate" name="birthdate" required>
-            </div>
-            <div class="mb-3">
-              <label for="player-phone-number" class="form-label">Numéro de téléphone:</label>
-              <input type="text" class="form-control" id="player-phone-number" name="phone_number" required>
-            </div>
-            <button id="submit-player" type="submit" class="btn btn-primary">Enregistrer &
-              Fermer</button>
-          </form>
-        </div>
+
+<!-- ---------- update player modal pop up ----------- -->
+ 
+  <dialog class="update-player" id="${joueur.id}">
+    <div>
+      <div class="d-flex justify-content-between">
+        <h3>Editer joueur</h3>
+        <h3 class="close-button">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+          </svg>
+          
+        </h3>
       </div>
+      <form id="player-form" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="player-name" class="form-label">Photo de profil:</label>
+          <input type="file" class="form-control" id="profile-picture" name="profile_picture" >
+        </div>
+        <div class="mb-3">
+          <label for="player-name" class="form-label">Nom:</label>
+          <input type="text" class="form-control" id="player-name" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label for="birthdate" class="form-label">Date de naissance:</label>
+          <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+        </div>
+        <div class="mb-3">
+          <label for="player-phone-number" class="form-label">Numéro de téléphone:</label>
+          <input type="text" class="form-control" id="player-phone-number" name="phone_number" required>
+        </div>
+        <button id="submit-player" type="submit" class="btn btn-primary">Enregistrer &
+          Fermer</button>
+      </form>
     </div>
-  </div>
+    
+  </dialog>
+
+  
 
 
   <div id="liste-joueur" class="row mx-auto" style="max-width: 100vw ;"></div>

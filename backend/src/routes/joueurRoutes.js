@@ -4,24 +4,13 @@ const joueurController = require('../controllers/joueurController.js');
 const multer  = require('multer')
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, '../public/assets/profile_pictures');
-    // cb(null, 'uploads');
-
-    const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, '../public/assets/profile_pictures'); 
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname);
-    }
-  });
   
   const upload = multer({ storage: storage });
 // CRUD routes for joueur
@@ -76,7 +65,14 @@ const storage = multer.diskStorage({
  *      
  * 
  */
-router.post('',upload.single('profile_picture'), joueurController.createJoueur); // Create
+router.post('',upload.single('profile_picture'), (req,res,next)=>{
+  console.log(req.file);
+  console.log("fgfgg")
+  if (!req.file) {
+    console.log("ya hliiiliii")
+  }
+  next();
+},joueurController.createJoueur); // Create
 
 /**
  * @swagger
