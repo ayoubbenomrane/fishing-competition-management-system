@@ -56,32 +56,45 @@ async function getJoueurById(req, res) {
             return res.status(404).json({ error: 'Joueur not found' });
         }
         res.status(200).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch joueur', details: err.message });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch joueur', details: error.message });
     }
 }
 
 // Update a joueur by ID
 async function updateJoueur(req, res) {
-    const { id } = req.params;
-    const { name } = req.body;
-    console.log(req.body)
-    // const query = `
-    //     UPDATE joueur
-    //     SET name = $1
-    //     WHERE id = $2
-    //     RETURNING *;
-    // `;
+    const {id}=req.params;
+    const body=req.body;
+    let query='';
+    const values=[];
+    let index=1;
+    console.log(body)
+    for(const [key,value] of Object.entries(body)){
+        query+=`${key}=$${index++} ,`;
+        values.push(value);
+    }
+    if(req.file){
+        query+= `profile_picture= $${index++} ,` ;
+        values.push(req.file.filename);
 
-    // try {
-    //     const result = await db.query(query, [name, id]);
-    //     if (result.rows.length === 0) {
-    //         return res.status(404).json({ error: 'Joueur not found' });
-    //     }
-    //     res.status(200).json({ message: 'Joueur updated successfully', data: result.rows[0] });
-    // } catch (err) {
-    //     res.status(500).json({ error: 'Failed to update joueur', details: err.message });
-    // }
+    }
+    values.push(id);
+    console.log(query)
+    query=query.slice(0,-1);
+    query= `UPDATE joueur SET ${query} WHERE id=$${index++}`;
+    console.log(query)
+    try{
+        await db.query("BEGIN");
+        await db.query(query,values)
+        await db.query("COMMIT")
+        res.status(201).json({message:'player updated successfully'})
+    }
+    catch(error){
+        res.status(500).json({ error: 'Failed to update joueur', details: error.message });
+
+    }
+
+
 }
 
 // Delete a joueur by ID

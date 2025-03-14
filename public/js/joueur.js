@@ -1,4 +1,4 @@
-import { getJoueurs, addPlayer, deletePlayer } from "./api.js";
+import { getJoueurs, addPlayer, deletePlayer, updatePlayer } from "./api.js";
 const listeJoueur = document.getElementById("liste-joueur");
 
 const deleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -96,12 +96,33 @@ document.addEventListener("click", async (event) => {
 
 document.addEventListener("click", async (event) => {
     if (event.target.closest(".btn-warning")) {
+        const button = event.target.closest(".btn-warning"); // Get the closest button
 
 
         modal.showModal();
         closeButton.addEventListener("click", () => {
             modal.close()
         })
+        joueurForm.addEventListener("submit",async (event)=>{
+            event.preventDefault();
+            const formData= new FormData(joueurForm);
+            const filteredData= new FormData()
+            for(const pair of formData.entries()){
+                if(pair[1] instanceof File && pair[1].name!='' ){
+                    console.log("yeet  ",pair[1].name)
+                    filteredData.append(pair[0],pair[1]);
 
+                }
+                else if (pair[1]!=''){
+                    filteredData.append(pair[0],pair[1]);
+                }
+            }
+            for(const pair of filteredData){
+                console.log(pair[0],pair[1])}
+
+            console.log(button.id)
+            await updatePlayer(button.id,filteredData)
+            loadJoueurs();
+        })
     }
 })

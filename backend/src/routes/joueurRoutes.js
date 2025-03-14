@@ -5,14 +5,15 @@ const multer  = require('multer')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../public/assets/profile_pictures'); 
+    cb(null, 'C:/Users/ayoub/OneDrive/Bureau/ayoub/autoF/CPSN/cpsn v 2/public/assets/profile_pictures')
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
   }
-});
-  
-  const upload = multer({ storage: storage });
+})
+
+
+const upload = multer({ storage: storage })
 // CRUD routes for joueur
 
 
@@ -65,14 +66,7 @@ const storage = multer.diskStorage({
  *      
  * 
  */
-router.post('',upload.single('profile_picture'), (req,res,next)=>{
-  console.log(req.file);
-  console.log("fgfgg")
-  if (!req.file) {
-    console.log("ya hliiiliii")
-  }
-  next();
-},joueurController.createJoueur); // Create
+router.post('',upload.single('profile_picture'), joueurController.createJoueur); // Create
 
 /**
  * @swagger
@@ -118,7 +112,7 @@ router.get('/:id', joueurController.getJoueurById); // Read One
  * 
  */
 
-router.put('/:id', joueurController.updateJoueur); // Update
+router.put('/:id',upload.single('profile_picture'), joueurController.updateJoueur); // Update
 /**
  * @swagger
  * /joueur/{id}:

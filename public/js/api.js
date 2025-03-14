@@ -52,6 +52,9 @@ export async function getJoueurs() {
 export async function updateRecord(record_id, body) {
     return await apiRequest(`record/${record_id}`, 'PUT', body,'json')
 }
+export async function updatePlayer(playerId,body){
+    return await apiRequest(`joueur/${playerId}`,"PUT",body)
+}
 
 export async function addPlayer(body) {
     return await apiRequest("joueur", "POST", body)
