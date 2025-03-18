@@ -59,18 +59,25 @@ async function getJourneeById(req, res) {
 // Update a journee by ID
 async function updateJournee(req, res) {
     const { id } = req.params;
-    const { name, date, place, duration } = req.body;
-
-    const query = `
-        UPDATE journee
-        SET name = $1, date = $2, place = $3, duration = $4
-        WHERE id = $5
-        RETURNING *;
-    `;
+    const body = req.body;
+    let counter=1;
+    let query='';
+    const values=[]
+    console.log(body)
+    for(const [key,value] of Object.entries(body)){
+        query+=`${key}=$${counter++} ,`;
+        values.push(value);
+    }
+    console.log(query);
+    query=query.slice(0,-1);
+    query=`UPDATE journee SET ${query} WHERE id=$${counter} returning *`;
+    console.log(query)
+    values.push(id);
+    console.log(values)
 
     try {
-        const result = await db.query(query, [name, date, place, duration, id]);
-        if (result.rows.length === 0) {
+        const result = await db.query(query, values);
+        if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Journee not found' });
         }
         res.status(200).json({ message: 'Journee updated successfully', data: result.rows[0] });

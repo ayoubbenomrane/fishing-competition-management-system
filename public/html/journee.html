@@ -39,4 +39,55 @@
         
   </div>
 
+  <div class="d-flex justify-content-center mb-4 ">
+    <button id="add-journee-button" class="btn btn-primary mt-4 " >
+      Ajouter Journée
+    </button>
+  </div>
+  <dialog class="update-journee w-50" id="${journee.id}">
+    <div>
+      <div class="d-flex justify-content-between">
+        <h3>Editer journée</h3>
+        <h3 class="close-button">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+          </svg>
+          
+        </h3>
+      </div>
+      <form id="journee-form" >
+        <div class="mb-3">
+            <label for="journee-name" class="form-label">Nom:</label>
+            <input type="text" class="form-control" id="journee-name" name="name" >
+        </div>
+        <div class="mb-3">
+            <label for="journee-date" class="form-label">Date:</label>
+            <input type="date" class="form-control" id="journee-date" name="date" >
+        </div>
+        <div class="mb-3">
+            <label for="journee-place" class="form-label">Place:</label>
+            <input type="text" class="form-control" id="journee-place" name="place"
+                >
+        </div>
+        <div class="mb-3">
+            <label for="journee-duration">Heures: <input type="number" min="0" max="23" step="1"  name="hours" id="hours"></label>
+            <label>Minutes: <input type="number" min="0" max="59" step="1"  name="minutes" id="minutes"></label>
+
+        </div>
+        <button id="submit-journee" type="submit" class="btn btn-primary">Enregistrer &
+            Fermer</button>
+    </form>
+    </div>
+    
+  </dialog>
+
+  
+
+
+  <div id="liste-journee" class="row mx-auto" style="max-width: 100vw ;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/journee.js" type="module"></script>
+
+
 </body>
