@@ -118,8 +118,8 @@ document.addEventListener("click",async (event)=>{
             }
             await updateJournee(id,filteredData);
             modal.close()
-            loadJournees();
+            await loadJournees();
 
-        })
+        }, { once: true })
     }
 })
