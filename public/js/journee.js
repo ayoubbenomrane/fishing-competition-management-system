@@ -1,4 +1,4 @@
-import { getJournees, addJournee,updateJournee ,deleteJournee} from "./api.js";
+import { getJournees, addJournee, updateJournee, deleteJournee } from "./api.js";
 const listeJournee = document.getElementById("liste-journee");
 const deleteIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
   <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -51,75 +51,59 @@ const journeeForm = document.getElementById("journee-form");
 const addJourneeButton = document.getElementById("add-journee-button")
 const modal = document.querySelector(".update-journee");
 const closeButton = document.querySelector(".close-button")
+var update=false;
+var id;
 addJourneeButton.addEventListener("click", async (event) => {
+    update=false;
     event.preventDefault()
     modal.showModal()
-    closeButton.addEventListener("click", () => {
-        modal.close()
-    })
-    journeeForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const name = document.getElementById("journee-name").value;
-        const date = document.getElementById("journee-date").value;
-        const place = document.getElementById("journee-place").value;
-        const hours = document.getElementById("hours").value;
-        const minutes = document.getElementById("minutes").value;
-        const duration = ` ${hours}:${minutes}`
-        console.log(duration)
-        console.log(minutes)
-        const data = {
-            "name": name,
-            "date": date,
-            "place": place,
-            "duration": duration
-        }
-        console.log(data)
-        
-        await addJournee(data);
-        modal.close();
-        loadJournees()
-    })
-
+    
 })
 
-document.addEventListener("click",async (event)=>{
-    if(event.target.closest(".btn-danger")){
-        const button=event.target.closest(".btn-danger");
+document.addEventListener("click", async (event) => {
+    if (event.target.closest(".btn-danger")) {
+        const button = event.target.closest(".btn-danger");
         await deleteJournee(button.id);
         await loadJournees();
 
     }
 })
+journeeForm.addEventListener("submit", async (event) => {
+    event.preventDefault()
+    const formData = new FormData(journeeForm)
+    const filteredData = {};
+    for (const [key, value] of formData) {
 
+        if (value != '' && key != 'hours' && key != 'minutes') {
+            filteredData[key] = value;
 
-document.addEventListener("click",async (event)=>{
-    if(event.target.closest(".btn-warning")){
-        const button=event.target.closest(".btn-warning")
+        }
+
+    }
+    if (formData.get('hours') != '') {
+        console.log(`${formData.get('hours')}:${formData.get('minutes')}`)
+        filteredData["duration"] = `${formData.get('hours')}:${formData.get('minutes')}`
+    }
+    if(update){
+    await updateJournee(id, filteredData);}
+    else{
+        await addJournee(filteredData)
+    }
+    modal.close()
+    await loadJournees();
+
+});
+closeButton.addEventListener("click", () => {
+    modal.close();
+});
+document.addEventListener("click", async (event) => {
+    if (event.target.closest(".btn-warning")) {
+        update=true;
+        const button = event.target.closest(".btn-warning")
         modal.showModal();
-        closeButton.addEventListener("click",()=>{
-            modal.close();
-        });
-        const id=button.id;
-        console.log(id,"  eee  ")
-        journeeForm.addEventListener("submit",async (event)=>{
-            event.preventDefault()
-            const formData=new FormData(journeeForm)
-            const filteredData= {};
-            for(const [key,value] of formData){
-                
-                if(value!='' && key!='hours' && key!='minutes'){
-                    filteredData[key]=value;
-                    
-                }
 
-            }
-            if(formData.get('hours')!=''){
-                filteredData[duration]=`${formData.get('hours')}:${formData.get('minutes')}`
-            }
-            await updateJournee(id,filteredData);
-            modal.close()
-            await loadJournees();
+        id = button.id;
+        console.log(id, "  eee  ")
 
-        }, { once: true })
     }
 })

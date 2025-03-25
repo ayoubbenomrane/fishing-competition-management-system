@@ -77,7 +77,7 @@ async function loadJournees() {
         <tr>
           <th>Nom et Prénom</th>
           <th>nbr de poisson</th>
-          <th>poids (kg)</th>
+          <th>poids (g)</th>
           <th>score</th>
           <th>rang</th>
           <th>absent</th>

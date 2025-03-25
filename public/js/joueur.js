@@ -65,21 +65,14 @@ loadJoueurs();
 const joueurForm = document.getElementById("player-form");
 const modal = document.querySelector(".update-player");
 const closeButton = document.querySelector(".close-button")
-
+var update=false;
+var button;
 
 const addPlayerButton = document.getElementById("add-player-button")
 addPlayerButton.addEventListener("click", async (event) => {
+    update=false;
     modal.showModal();
-    joueurForm.addEventListener("submit",async (event)=>{
-        event.preventDefault();
-        const formData= new FormData(joueurForm);
-        await addPlayer(formData)
-        loadJoueurs();
-    })
-    closeButton.addEventListener("click", () => {
-
-        modal.close()
-    })
+    
 })
 
 document.addEventListener("click", async (event) => {
@@ -93,36 +86,38 @@ document.addEventListener("click", async (event) => {
     }
 })
 
+joueurForm.addEventListener("submit",async (event)=>{
+    event.preventDefault();
+    const formData= new FormData(joueurForm);
+    const filteredData= new FormData()
+    for(const pair of formData.entries()){
+        if(pair[1] instanceof File && pair[1].name!='' ){
+            console.log("yeet  ",pair[1].name)
+            filteredData.append(pair[0],pair[1]);
 
+        }
+        else if (pair[1]!=''){
+            filteredData.append(pair[0],pair[1]);
+        }
+    }
+    for(const pair of filteredData){
+        console.log(pair[0],pair[1])}
+
+    // console.log(button.id)
+    if(update){
+    await updatePlayer(button.id,filteredData)}
+    else {
+        await addPlayer(filteredData)
+    }
+    loadJoueurs();
+})
+closeButton.addEventListener("click", () => {
+    modal.close()
+})
 document.addEventListener("click", async (event) => {
     if (event.target.closest(".btn-warning")) {
-        const button = event.target.closest(".btn-warning"); // Get the closest button
-
-
+        button = event.target.closest(".btn-warning"); // Get the closest button
+        update=true;
         modal.showModal();
-        closeButton.addEventListener("click", () => {
-            modal.close()
-        })
-        joueurForm.addEventListener("submit",async (event)=>{
-            event.preventDefault();
-            const formData= new FormData(joueurForm);
-            const filteredData= new FormData()
-            for(const pair of formData.entries()){
-                if(pair[1] instanceof File && pair[1].name!='' ){
-                    console.log("yeet  ",pair[1].name)
-                    filteredData.append(pair[0],pair[1]);
-
-                }
-                else if (pair[1]!=''){
-                    filteredData.append(pair[0],pair[1]);
-                }
-            }
-            for(const pair of filteredData){
-                console.log(pair[0],pair[1])}
-
-            console.log(button.id)
-            await updatePlayer(button.id,filteredData)
-            loadJoueurs();
-        })
     }
 })
