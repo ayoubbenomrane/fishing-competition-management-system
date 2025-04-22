@@ -2,7 +2,7 @@
   "name": "cpsn-v-2",
   "version": "1.0.0",
   "engines": {
-    "node": ">=18.0.0 <19"
+    "node": "19"
   },
   "main": "index.js",
   "scripts": {
