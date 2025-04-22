@@ -1,6 +1,6 @@
 const app = require('./app'); // Import the app instance from app.js
 const db = require('./config/db'); // Import SQLite database instance
-
+require('dotenv').config(); 
 const PORT = process.env.PORT || 3000;
 
 // Start the server

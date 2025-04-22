@@ -105,7 +105,7 @@ joueurForm.addEventListener("submit",async (event)=>{
 
     // console.log(button.id)
     if(update){
-    await updatePlayer(button.id,filteredData)}
+    await updatePlayer(button.id,filteredData)}             
     else {
         await addPlayer(filteredData)
     }
