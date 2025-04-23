@@ -3,12 +3,14 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDocs = require('./swagger'); // Import Swagger configuration
+const path = require('path');
 
 const journeeRoutes = require('./routes/journeeRoutes');
 const joueurRoutes = require('./routes/joueurRoutes');
 const recordRoutes = require('./routes/recordRoutes');
-
 const app = express();
+
+app.use(express.static(path.join(__dirname, '../frontend')));
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' })
 // Middleware
