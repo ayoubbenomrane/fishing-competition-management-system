@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "database.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1" ,
-    "start":"node src/server"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.13.1",
+    "process": "^0.11.10",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
     "swagger-jsdoc": "^6.2.8",
