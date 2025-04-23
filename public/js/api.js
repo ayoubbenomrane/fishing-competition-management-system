@@ -1,4 +1,4 @@
-    const url = "https://fathomless-garden-14159-487a779b2d94.herokuapp.com";
+    const url = "https://fathomless-garden-14159-487a779b2d94.herokuapp.com/";
     async function apiRequest(endpoint, method = 'GET', body = null, contentType=null) {
         try {
             const options = {
