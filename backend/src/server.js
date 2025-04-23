@@ -1,6 +1,11 @@
 const app = require('./app'); // Import the app instance from app.js
 const db = require('./config/db'); // Import SQLite database instance
-require('dotenv').config(); 
+// require('dotenv').config(); 
+const path = require('path');
+console.log(__dirname)
+require('dotenv').config({ path: path.join(`${__dirname}/../`, '.env') });
+console.log("DB URL:", process.env.DB_USER); // Test immediately
+
 const PORT = process.env.PORT || 3000;
 
 // Start the server

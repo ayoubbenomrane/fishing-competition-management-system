@@ -30,5 +30,12 @@ app.use('/api/record', recordRoutes); // Mount record routes
 app.get('/', (req, res) => {
     res.send('Welcome to the Fishing Competition API');
 });
+app.get('/debug-env', (req, res) => {
+    res.json({
+    //   NODE_ENV: process.env.NODE_ENV,
+      DATABASE_URL: process.env.DB_PASSWORD ? "Exists" : "Missing",
+      // Add other vars
+    });
+  });
 
 module.exports = app;
